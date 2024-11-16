@@ -1,0 +1,9 @@
+Img_Loc,Tx,Ty,Tz,Rx(roll),Ry(pitch),Rz(yaw)
+imgdata/img0.jpg,55,0,0,-88.5,0.8,0.6
+imgdata/img1.jpg,55,36.5,6.3,-69.3,3,43.9
+imgdata/img2.jpg,55,0,15,-71.7,2.2,8
+imgdata/img3.jpg,20,-63,15,-87.8,,-59.6
+imgdata/img4.jpg,20,-63,0,-87.8,1.5,-65.2
+imgdata/img5.jpg,36,-52,0,-87.3,,-42.2
+imgdata/img6.jpg,55,36.5,0,-87.6,0.9,29
+imgdata/img7.jpg,55,-24,0,-88,,-35.7
