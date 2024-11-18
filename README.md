@@ -17,4 +17,7 @@
 
 ## 16-11-24
 - used ```img5.jpg and img4.jpg``` then the sift is giving uneven matches.
-- 
+- checked sift on img 4 and it giving not points on the img.
+- got the points after freaking out on masking for img4 and also manually drawing circles to the keypoints to get a clearer view.
+- also filtered those kp whose distance b/w one another is less than 20px.
+- Now the task is to calculate the 3D points for the img and applying it on dlt_hardcode.py
