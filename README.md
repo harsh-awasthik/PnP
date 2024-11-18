@@ -1,23 +1,26 @@
-# PnP
+# PnP Progress Log
 
 ## date
-- created ```data.csv``` which has the images and the rotational and trasitional co-ordinates
+- Created `data.csv` with images and rotational/translational coordinates.
 
 ## date
-- Applied SIFT on the ```imgdata``` and created ```sift_img```
-- used BF matcher to match the keypoints on 2 images in ```des_match.py```
+- Applied SIFT to `imgdata` to create `sift_img`.
+- Used BF matcher for keypoint matching in `des_match.py`.
 
 ## 13-11-24
-- to get 6 points for dlt we have decided to get the best 6 points detected by sift. 
-- also to get those points by masking so that the points which are of no intrest region are ignored.
+- Chose 6 best SIFT-detected points for DLT.
+- Used masking to ignore non-interest regions.
 
 ## 15-11-24
-- coded ```dlt_hardcode.py```
-- while working on ```img1.jpg``` we got to know that there is only one plane so dlt fails on it..
+- Implemented `dlt_hardcode.py`.
+- Found DLT fails on `img1.jpg` due to a single plane.
 
 ## 16-11-24
-- used ```img5.jpg and img4.jpg``` then the sift is giving uneven matches.
-- checked sift on img 4 and it giving not points on the img.
-- got the points after freaking out on masking for img4 and also manually drawing circles to the keypoints to get a clearer view.
-- also filtered those kp whose distance b/w one another is less than 20px.
-- Now the task is to calculate the 3D points for the img and applying it on dlt_hardcode.py
+- Tested `img5.jpg` and `img4.jpg`, observed uneven SIFT matches.
+- Fixed masking issues on `img4.jpg` and manually marked keypoints.
+- Filtered keypoints with distances < 20px.
+- Planned 3D point calculation for DLT in `dlt_hardcode.py`.
+
+## 18-11-24
+- Calculated 6 best 3D coordinates from SIFT.
+- Applied DLT using `dlt_chatgpt.py` and a GitHub-sourced `dlt.py`.
