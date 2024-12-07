@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 def Normalization(nd, x):
     '''
@@ -88,24 +89,34 @@ def DLTcalib(nd, xyz, uv):
 
     # The parameters are in the last line of Vh and normalize them
     L = V[-1, :] / V[-1, -1]
-    print(L)
+    # print(L)
     # Camera projection matrix
     H = L.reshape(3, nd + 1)
-    print(H)
+    # print(H)
 
     # Denormalization
     # pinv: Moore-Penrose pseudo-inverse of a matrix, generalized inverse of a matrix using its SVD
     H = np.dot( np.dot( np.linalg.pinv(Tuv), H ), Txyz )
-    print(H)
+    # print(H)
     H = H / H[-1, -1]
-    print(H)
+    # print(H)
     L = H.flatten()
-    print(L)
+    # print(L)
 
     # Mean error of the DLT (mean residual of the DLT transformation in units of camera coordinates):
     uv2 = np.dot( H, np.concatenate( (xyz.T, np.ones((1, xyz.shape[0]))) ) ) 
     uv2 = uv2 / uv2[2, :] 
     # Mean distance:
+
+
+    image = cv2.imread('..\imgdata\img4.jpg')
+
+    for i in range(6):
+        cv2.circle(image, (int(uv[i][0]), int(uv[i][1])), 4, (0, 0, 255), -1)
+        cv2.circle(image, (int(uv2[0][i]), int(uv2[1][i])), 4, (255, 0, 0), -1)
+
+    cv2.imwrite('projected_points.jpg', image)
+
     err = np.sqrt( np.mean(np.sum( (uv2[0:2, :].T - uv)**2, 1)) ) 
 
     return L, err
@@ -132,10 +143,16 @@ def DLT():
 
     nd = 3
     P, err = DLTcalib(nd, xyz, uv)
-    print('Matrix')
-    print(P)
-    print('\nError')
-    print(err)
+    
+    return (P, err)
 
 if __name__ == "__main__":
-    DLT()
+    P, err = DLT()
+
+    print('Matrix')
+    print(P)
+
+    print("Error: ")
+    print(err)
+
+    
