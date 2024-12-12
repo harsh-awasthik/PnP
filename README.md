@@ -47,7 +47,21 @@
 - Converted rotation vectors to Euler angles using the Rodrigues method.
 - Noted discrepancies in translation vectors and discussed potential issues with co-planar points.
 - Concluded that co-planar points might lead to degenerate solutions.
+
 ## 04-12-2024
 - Applied p3p on another image and taking non-coplaner points.
 - Still receiving the errors.
 - Identified that manual inaccuracies in point Calculation might be the root cause of errors.
+
+## 10-12-2024
+- Figured out that DLT was not feasible for calculating the calibration matrix, so decided to use the Zhang method instead.
+
+## 11-12-2024
+- The code for applying the Zhang method using the checkerboard function was written by Pragati.
+- We (Harsh and Ammar) took 60 photos and applied the Zhang method to those images.
+- Obtained the calibration matrix
+
+## 12-12-2024
+- We (Harsh and Ammar) applied the solvePnP function to obtain the rotational and translational vectors. `./pnp`
+- These results are somewhat similar to what we calculated manually. The z-axis of the translational vector is similar the distance from the camera to the gate.
+- he image can be seen at `./pnp/imgpoints.jpg`.
