@@ -86,7 +86,7 @@ def DLTcalib(nd, xyz, uv):
 
     # Find the 11 parameters:
     U, S, V = np.linalg.svd(A)
-
+    print(V)
     # The parameters are in the last line of Vh and normalize them
     L = V[-1, :] / V[-1, -1]
     # print(L)

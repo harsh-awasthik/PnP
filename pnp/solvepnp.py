@@ -2,18 +2,18 @@ import numpy as np
 import cv2
 from function import rotational_to_euler
 
-camera_matrix = np.array([[106.83227657, -3.55675381, 901.58656603],
-                          [0, 142.86282974, 525.60722677],
+camera_matrix = np.array([[675.537322,0.000000,311.191300],
+                          [0.000000,677.852071,221.610964],
                           [0, 0, 1]])
 
 dist_coeffs = np.zeros((4, 1)) #Assuming no distortion
 
-image_points = np.array([(670, 424), (882, 426), (805, 527), (672, 604)], dtype=np.float32)
+image_points = np.array([(404, 96), (1015, 153), (413, 561), (951, 519)], dtype=np.float32)
 
-object_points = np.array([[8, 0, -4.5],
-                          [8, 0, 5.5],
-                          [0, 0, 0],
-                          [0, 13.3, 4.5]], dtype=np.float32)
+object_points = np.array([[0, 0, 0],
+                          [42, 0, 0],
+                          [0, 0, -29],
+                          [0, 42, -29]], dtype=np.float32)
 
 
 
