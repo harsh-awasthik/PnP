@@ -84,21 +84,22 @@ while cap.isOpened():
             res = cv2.drawMatches(img1, kp1, img2, kp2, good_matches, None, \
                             matchesMask=matchesMask,
                             flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
+
         except Exception as e:
             res = cv2.drawMatches(img1, kp1, img2, kp2, good_matches, None,
                             flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
                             
-        
-        # Overlay the text
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        font_scale = 0.5
-        font_thickness = 1
-        color = (255, 255, 255)
-        x = res.shape[1] - 200  
-        y = 20  
+        else:
+            # Overlay the text
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            font_scale = 0.5
+            font_thickness = 1
+            color = (255, 255, 255)
+            x = res.shape[1] - 200  
+            y = 20  
 
-        cv2.putText(res, line1, (x, y), font, font_scale, color, font_thickness, cv2.LINE_AA)
-        cv2.putText(res, line2, (x, y + 20), font, font_scale, color, font_thickness, cv2.LINE_AA)
+            cv2.putText(res, line1, (x, y), font, font_scale, color, font_thickness, cv2.LINE_AA)
+            cv2.putText(res, line2, (x, y + 20), font, font_scale, color, font_thickness, cv2.LINE_AA)
 
     cv2.imshow(win_name, res)
     key = cv2.waitKey(1)
