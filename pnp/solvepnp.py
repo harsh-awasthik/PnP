@@ -6,6 +6,8 @@ camera_matrix = np.array([[675.537322,0.000000,311.191300],
                           [0.000000,677.852071,221.610964],
                           [0, 0, 1]])
 
+
+
 dist_coeffs = np.zeros((4, 1)) #Assuming no distortion
 
 image_points = np.array([(404, 96), (1015, 153), (413, 561), (951, 519)], dtype=np.float32)

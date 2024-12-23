@@ -30,6 +30,31 @@ def get_four_points(image):
     cv2.destroyAllWindows()
     return points
 
+def get_n_points(n, image):
+    points = []
+
+    def mouse_callback(event, x, y, flags, param):
+        # Record a point on left mouse button click
+        if event == cv2.EVENT_LBUTTONDOWN:
+            points.append((x, y))
+            print(f"Point {len(points)} selected: ({x}, {y})")
+            # Draw the point on the image
+            cv2.circle(temp_image, (x, y), 5, (0, 255, 0), -1)
+            cv2.imshow("Select 4 Points", temp_image)
+
+    # Load the image
+    temp_image = image.copy()
+    
+    cv2.imshow("Select 4 Points", temp_image)
+    cv2.setMouseCallback("Select 4 Points", mouse_callback)
+
+    # Wait until 4 points are selected
+    while len(points) < n:
+        cv2.waitKey(1)
+
+    cv2.destroyAllWindows()
+    return points
+
 def draw_quadrilateral(image, points):
     pts = np.array(points, dtype=np.int32)
     
