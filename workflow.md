@@ -1,164 +1,67 @@
-# 📂 PnP - Pose Estimation Toolkit
+# PnP Progress Log
 
-This document provides a detailed explanation of the modules implemented in the **PnP** repository.  
-It covers object pose estimation using **Perspective-n-Point (PnP)**, feature matching with **SIFT**, **homography estimation**, and **camera calibration techniques** like **DLT** and **Zhang's Method**.
+## date
+- Created `data.csv` with images and rotational/translational coordinates.
 
-Use this as a reference to understand the complete workflow and the role of each component in the system.
+## date
+- Applied SIFT to `imgdata` to create `sift_img`.
+- Used BF matcher for keypoint matching in `des_match.py`.
 
----
+## 13-11-24
+- Chose 6 best SIFT-detected points for DLT.
+- Used masking to ignore non-interest regions.
 
-## 📷 PnP (Perspective-n-Point) Automation
+## 15-11-24
+- Implemented `dlt_hardcode.py`.
+- Found DLT fails on `img1.jpg` due to a single plane.
 
-This module helps in **detecting the orientation and position of an object (like a gate)** using live camera input and estimating 3D pose using the PnP algorithm.
+## 16-11-24
+- Tested `img5.jpg` and `img4.jpg`, observed uneven SIFT matches.
+- Fixed masking issues on `img4.jpg` and manually marked keypoints.
+- Filtered keypoints with distances < 20px.
+- Planned 3D point calculation for DLT in `dlt_hardcode.py`.
 
-### 🛠️ Workflow Overview:
-- First, the user manually selects a quadrilateral region (e.g., a gate) in the first frame.
-- SIFT keypoints and descriptors are extracted from this region.
-- In each subsequent frame:
-  - Keypoints are matched using BFMatcher.
-  - RANSAC is used to find a reliable homography between frames.
-  - If enough inliers exist, `cv2.solvePnP()` is applied to estimate the camera's position relative to the selected object.
-
-### 📌 What Each File Does:
-- **`ransac.py`**: Handles initial image loading, feature detection, keypoint matching, homography estimation using RANSAC, and visualization.
-- **`function.py`**: Contains helper functions to:
-  - Select points on image (`get_four_points`, `get_n_points`)
-  - Mask and draw quadrilateral regions
-  - Convert rotation matrix to Euler angles
-- **`solvepnp.py`**: Uses the detected region and known real-world object dimensions to:
-  - Run `cv2.solvePnP()` on the matching points
-  - Convert the rotation vector to Euler angles (yaw, pitch, roll)
-  - Display both translation and orientation values over the live camera feed
-
-### 🎯 Output:
-- Live matching of detected region between frames.
-- Estimated **yaw**, **pitch**, **roll**, and **translation (x, y)** vectors shown live.
-- Transformed quadrilateral drawn on the moving frame.
-- Terminal shows match accuracy percentage per frame.
-
-### ❌ Limitation:
-- Accuracy is highly dependent on good lighting, sufficient texture for keypoints, and precision in manual selection of points.
-- If not enough matches or inliers are found, pose estimation will fail for that frame.
-
----
-
-## 🔧 DLT and Camera Matrix Decomposition
-
-This module helps us calculate the camera projection matrix using known 3D world points and their 2D image positions, and then decompose it into camera parameters.
+## 18-11-24
+- Calculated 6 best 3D coordinates from SIFT.
+- Applied DLT using `dlt_chatgpt.py` and a GitHub-sourced `dlt.py`.
 
 
+## 20-11-2024
+- Matched real points (red) with projected points (blue) on the image to check for errors.
+- `NOT DONE` Identified minimal error and acknowledged the need to learn NumPy functions like `svd`, `concatenate`, `pinv`, and `flatten` used in the code.
+- Understood the overall DLT process.
 
-### 📌 What it does:
-- Takes 3D object coordinates and 2D image points.
-- Normalizes the data for better accuracy.
-- Uses SVD to calculate the projection matrix (DLT).
-- Projects 3D points back to the image plane.
-- Draws both actual and projected points on the image.
-- Calculates the mean error of projection.
-- Applies **RQ decomposition** to extract:
-  - **K**: Camera Calibration Matrix (intrinsics)
-  - **R**: Rotation Matrix
-  - **T**: Translation Vector
+## 26-11-2024
+- Confirmed that the DLT method was used successfully to estimate the projection matrix.
+- Clarified the next steps involving 2D-3D correspondences and PnP camera pose estimation.
+- Began exploring QR decomposition on the projection matrix to extract intrinsic parameters \( K \), rotation matrix \( R \), and translation vector \( T \).
 
+## 27-11-2024
+- Applied QR decomposition and verified that \( K \) is upper triangular and \( R \) is orthonormal.
+- Normalized \( K \) by dividing by \( K[3,3] \) and calculated raw pitch and roll from \( R \).
+- Determined \( T \) from the fourth column of the projection matrix and understood frame-of-reference differences.
+- Planned to utilize OpenCV’s PnP algorithm (starting with P3P) for further computations.
 
-### 🖼️ Output:
-- `projected_points.jpg` with red (original) and blue (projected) dots.
-- Projection matrix and error printed in the terminal.
-- K, R, and T matrices displayed after decomposition.
+## 29-11-2024
+- Applied PnP algorithm to selected points in the original image, assuming zero distortion coefficients due to lack of calibration data.
+- Converted rotation vectors to Euler angles using the Rodrigues method.
+- Noted discrepancies in translation vectors and discussed potential issues with co-planar points.
+- Concluded that co-planar points might lead to degenerate solutions.
 
+## 04-12-2024
+- Applied p3p on another image and taking non-coplaner points.
+- Still receiving the errors.
+- Identified that manual inaccuracies in point Calculation might be the root cause of errors.
 
-### ❌ Limitation:
-Although the DLT and decomposition code run successfully, they are **not giving reliable results in our case**.  
-This is because DLT requires **very precise input measurements** (especially accurate 3D coordinates and image points).  
-As a result, the method does **not estimate the object's distance from the camera accurately**, which is essential for our application.
+## 10-12-2024
+- Figured out that DLT was not feasible for calculating the calibration matrix, so decided to use the Zhang method instead.
 
----
+## 11-12-2024
+- The code for applying the Zhang method using the checkerboard function was written by Pragati.
+- We (Harsh and Ammar) took 60 photos and applied the Zhang method to those images.
+- Obtained the calibration matrix
 
-## 🧠 SIFT Feature Detection and Matching
-
-This module includes two uses of SIFT:
-- Selecting strong feature points from an image.
-- Matching features live using webcam frames and homography.
-
-
-
-### 📌 What it does:
-- Applies **SIFT** to detect feature points.
-- In the first part, it selects and saves **6 strong, well-spaced keypoints** from a masked region in an image.
-- In the second part, it uses **real-time webcam frames** to detect and match features with a selected region.
-- Computes **homography** to transform the selected region across frames.
-- Displays match accuracy and overlays matching area on the live video.
-
-
-### 🖼️ Output:
-- `selected6Poinnts.jpg`: Image with 6 labeled keypoints.
-- `pointsdata.txt`: Coordinates of selected keypoints from image.
-- Real-time SIFT matches and homography tracking via webcam.
-- Accuracy of the match shown on the video feed.
-
-
-### ✅ Use Case:
-- Use the **static keypoint extraction** part when you need clean, stable feature points for calibration or matching.
-- Use the **live matching with homography** for dynamic tracking and object detection in video.
-
-
-### 📝 Note:
-Both parts use SIFT but have **different goals** — one is offline and controlled, the other is real-time and interactive.
-
----
-
-## 📷 Zhang's Camera Calibration Method
-
-This module implements Zhang’s method to calibrate a camera using a series of checkerboard images. It follows a two-step approach: first collecting data (images), then performing calibration.
-
-
-### 📌 What it does:
-- Captures multiple images of a checkerboard from different angles and distances using a webcam.
-- Detects inner corners of the checkerboard in each image using OpenCV.
-- Defines the 3D world coordinates based on checkerboard layout and real-world square size.
-- Computes:
-  - Camera matrix (intrinsic parameters)
-  - Distortion coefficients
-  - Rotation vectors
-  - Translation vectors
-
-
-### 🖼️ Output:
-- Camera Matrix: Printed as a 3×3 matrix representing focal lengths and optical centers.
-- Distortion Coefficients: Printed as a vector describing lens distortion.
-- Rotation and Translation Vectors: Printed for each calibration image.
-- Checkerboard corners visualized on images during processing.
-
-
-### ✅ Use Case:
-This method is useful for accurately calibrating a camera to remove distortion and understand its internal geometry. It is widely used in 3D vision, robotics, and AR applications.
-
-
-### 📝 Notes:
-- The checkerboard used has 6 rows × 8 columns of inner corners.
-- Each square is assumed to be 20 mm × 20 mm in size.
-- Accuracy improves when the images are captured from different angles and distances.
-- Capturing 15–20 well-framed images with clearly visible corners is recommended.
-
----
-## 📁 Folder Structure
-<pre>
-PnP/
-│
-├── function.py
-├── ransac.py
-├── solvepnp.py
-├── data/
-│   ├── pointsdata.txt
-│   └── selected6Points.jpg
-├── RealsenseImages/
-│   └── img0.jpg to img80.jpg
-├── Calibration/
-│   └── images/
-│       └── img1.jpg ...
-├── dlt.py, dlt_chatgpt.py
-├── projected_points.jpg
-├── workflow.md
-├── README.md
-└── ...
-</pre>
+## 12-12-2024
+- We (Harsh and Ammar) applied the solvePnP function to obtain the rotational and translational vectors. `./pnp`
+- These results are somewhat similar to what we calculated manually. The z-axis of the translational vector is similar the distance from the camera to the gate.
+- he image can be seen at `./pnp/imgpoints.jpg`.
